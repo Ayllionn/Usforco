@@ -58,7 +58,7 @@ def start():
     try:
         while True:
             files = glob("data_exploit/database/*.json")
-            choices = [f.split("\\")[-1][:-5] for f in files]
+            choices = [f.split("\\")[-1].split("/")[-1][:-5] for f in files]
 
             choiced = curses.wrapper(choice, choices)
             if choiced == "! Exit !":

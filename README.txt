@@ -13,4 +13,7 @@ De plus, notez que certaines bibliothèques peuvent nécessiter les permissions 
 
 Si vous avez besoin de me contacter pour une assistance supplémentaire, vous pouvez me retrouver sur Discord sous le nom de 'ayllionne' ou sur Instagram sous le nom de 'ayllionne' également.
 
+**TOUT CECI EST ENCORE EN DEVELLOPPEMENT CE N EST QU UN PROJET SI VOUS VOULEZ PARTICIPER VEUILLEZ ME CONTACTER VIA DISCORD**
+
+
 Bonne chance avec votre développement de bots Discord en Python !

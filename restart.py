@@ -6,7 +6,7 @@ if system() == "Windows":
 else:
     system = "lin"
     try:
-        with open("os_conf", "r+", encoding="utf8") as f:
+        with open("cache/os_conf", "r+", encoding="utf8") as f:
             terminal = f.read()
 
     except:

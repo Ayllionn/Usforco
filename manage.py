@@ -17,7 +17,7 @@ except ModuleNotFoundError:
     print("1er demarrage lancement de la commande de config")
     from commandes.conf import start
     start()
-    reload()
+    import restart
 
 if __name__ == '__main__':
     term = CustomTerminal("Bot manager", "o", panel=False, help_at_start=True, save=reload)

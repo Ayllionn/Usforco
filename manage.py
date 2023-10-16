@@ -2,15 +2,6 @@ import os
 from CustomTerm import CustomTerminal
 from platform import system
 
-def reload():
-    """restart le programme pour prendre en compte les mise a jour"""
-    if system() == "Windows":
-        os.system("start py manage.py")
-        exit()
-    else:
-        input("le programme vas s'arreter relancer le pour continuer")
-        exit()
-
 try:
     from conf.bot import *
 except ModuleNotFoundError:

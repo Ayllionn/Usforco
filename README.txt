@@ -8,3 +8,5 @@ Toutefois, cela peut varier en fonction des extensions que vous installez et de 
 Si vous avez besoin de me contacter pour une assistance supplémentaire, vous pouvez me retrouver sur Discord sous le nom de 'ayllionne'.
 
 Bonne chance avec votre développement de bots Discord en Python !
+
+# EN DEVELOPPEMENT !

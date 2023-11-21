@@ -1,0 +1,1 @@
+from Bot.master import NotFound, NotConfigured

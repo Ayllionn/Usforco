@@ -5,6 +5,25 @@ from .cmds import create_table, \
     get_one_by_id, create_donne, delete_donne, update
 from .objs import *
 
+"""
+        class MODEL:
+        -> Représente une donnée précise dans la table vous pouvez modifié l'objet et après le sauvegardé. Get un autre object qui appartient a la même table etc...
+            def table(self):
+            -> permet d'otbtenir la table de la base de données'
+
+            create(self, **kwargs):
+            -> permet de créer une nouvelle ligne dans la table
+
+            get(self, id):
+            -> permet de récupérer une ligne de la table
+
+            delete(self):
+            -> permet de supprimer une ligne de la table
+
+            update(self):
+            -> permet de mettre à jour une ligne de la table
+"""
+
 
 class orm:
     def __init__(self):

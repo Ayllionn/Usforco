@@ -1,10 +1,7 @@
 import traceback
-
 import discord
 from discord import Client
 from discord.app_commands.tree import CommandTree
-import json
-
 import DB
 from DB import DB as db
 
@@ -108,13 +105,11 @@ class BOT(Client):
         print(f"{self.user.name} Est connecté")
         config.end()
 
-        try:
-            await self._on_ready_func()
-        except:
-            pass
-
         for i in self._on_ready_func:
-            await i()
+            try:
+                await i()
+            except:
+                print(traceback.format_exc())
 
     def load(self):
         self.run(self.token)

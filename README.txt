@@ -9,4 +9,4 @@ Si vous avez besoin de me contacter pour une assistance supplémentaire, vous po
 
 Bonne chance avec votre développement de bots Discord en Python !
 
-#EN DEVELOPPEMENT !
+EN DEVELOPPEMENT !

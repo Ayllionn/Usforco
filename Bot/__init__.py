@@ -43,4 +43,4 @@ for root, dirs, files in os.walk("./Bot/Bot"):
             print(temp, "N'as pas correctement était importé au projet")
             with open("traceback.txt", "a+", encoding="utf8") as file:
                 file.write("________________________________________________________________________________________")
-                file.write(traceback.format_exc())
+                file.write(traceback.print_exc())

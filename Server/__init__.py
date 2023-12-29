@@ -1,3 +1,4 @@
+import json
 import os
 import threading
 import time
@@ -11,8 +12,9 @@ from importlib import import_module
 from data import ORM
 
 class BOT(discord.Client):
-    def __init__(self, dir, token, db_path, db_name, intent=None):
+    def __init__(self, dir, token, db_path, db_name, static, intent=None):
         self.dir = dir
+        self.static_dir = static
         if intent is not None:
             if type(intent) is list:
                 intents = Intents(**{k: True for k in intent})
@@ -34,6 +36,26 @@ class BOT(discord.Client):
         self.token = token
         self.tree = CommandTree(self)
         self._objs = {}
+
+    def get_static(self, name):
+        try:
+            with open(f"{self.static_dir}/{name}", "r+") as f:
+                if name.endswith(".json"):
+                    return load(f)
+                else:
+                    return f.read()
+        except:
+            return None
+        
+    def set_static(self, name, content):
+        chemin = f"{self.static_dir}/{name}"
+        if not os.path.exists(chemin):
+            os.makedirs(chemin)
+        with open(chemin, "w+", encoding="utf8") as f:
+            if name.endswith(".json"):
+                json.dump(content, f)
+            else:
+                f.write(content)
 
     async def save_view(self, obj:object, msg, edit=False):
         obj_name = obj.__class__.__name__

@@ -4,5 +4,6 @@
   "db_path": "data/",
   "db_name": "test",
   "dir": "./ext/test",
+  "static": "./static/test",
   "commun": []
 }

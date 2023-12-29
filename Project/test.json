@@ -1,0 +1,8 @@
+{
+  "token": "token",
+  "intent": "all",
+  "db_path": "data/",
+  "db_name": "test",
+  "dir": "./ext/test",
+  "commun": []
+}

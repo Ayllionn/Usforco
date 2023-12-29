@@ -1,1 +1,0 @@
-vous pouvez organisé votre code ici, les fichier dont leurs noms commencerons par _ serons ignoré ainsi que ceux qui on comme 1er ligne (ignore, pass, no)

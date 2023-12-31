@@ -117,6 +117,7 @@ class BOT(discord.Client):
 class Project:
     def __init__(self, name, conf):
         self.error = False
+        self._container = []
 
         try:
             self.name = name
@@ -146,12 +147,11 @@ class Project:
                         file = file[:-3]
                         if root.startswith("."):
                             root = root[2:]
-                        root.replace(os.getcwd(), "");
+                        root.replace(os.getcwd(), "")
                         root = root.replace("\\", "/").replace("/", ".") + "." + file
                         print(root)
                         module = import_module(root)
-                        getattr(module, "addon")(self.bot)
-
+                        self._container.append(getattr(module, "addon")(self.bot))
 
             print(name, "initialised ! with no errors")
         except Exception as e:
@@ -163,14 +163,16 @@ class Project:
             while True:
                 try:
                     self.bot.run(token=self.bot.token)
-                except:
+                except KeyboardInterrupt:
+                    break
+                else:
                     time.sleep(10)
                     continue
         else:
             with open(f"./errors/{self.name}", "a+", encoding="utf8") as f:
-                f.write(self.error + "\n_____________________________________________________________________________\n")
+                f.write(
+                    self.error + "\n_____________________________________________________________________________\n")
                 print(self.name, f"ERROR, details in ./errors/{self.name}")
-
 
 class Serveur:
     def __init__(self):

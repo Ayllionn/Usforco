@@ -11,6 +11,7 @@ from discord.app_commands.tree import CommandTree
 from importlib import import_module
 from data import ORM
 
+
 class BOT(discord.Client):
     def __init__(self, dir, token, db_path, db_name, static, intent=None):
         self.dir = dir
@@ -27,8 +28,8 @@ class BOT(discord.Client):
         class créeant le bot et déployant les tools utilisables
         """
         super().__init__(intents=intents)
-        self.sysorm : ORM = None
-        self.orm : ORM = None
+        self.sysorm: ORM = None
+        self.orm: ORM = None
 
         self.db_path = db_path
         self.db_name = db_name
@@ -36,6 +37,13 @@ class BOT(discord.Client):
         self.token = token
         self.tree = CommandTree(self)
         self._objs = {}
+        self._fun_or = []
+
+    def on_ready_addon(self):
+        def decorator(func):
+            self._fun_or.append(func)
+
+        return decorator
 
     def get_static(self, name):
         try:
@@ -46,7 +54,7 @@ class BOT(discord.Client):
                     return f.read()
         except:
             return None
-        
+
     def set_static(self, name, content):
         chemin = f"{self.static_dir}/{name}"
         if not os.path.exists(chemin):
@@ -57,9 +65,11 @@ class BOT(discord.Client):
             else:
                 f.write(content)
 
-    async def save_view(self, obj:object, msg, edit=False):
+    async def save_view(self, obj: object, msg, edit=False):
         obj_name = obj.__class__.__name__
-        options = {k:v for k,v in obj.__dict__.items() if k not in ["_View__timeout", "_children", "_View__weights", "id", "_cache_key", "_View__cancel_callback", "_View__timeout_expiry", "_View__timeout_task", "_View__stopped"]\
+        options = {k: v for k, v in obj.__dict__.items() if
+                   k not in ["_View__timeout", "_children", "_View__weights", "id", "_cache_key",
+                             "_View__cancel_callback", "_View__timeout_expiry", "_View__timeout_task", "_View__stopped"] \
                    and type(v) in [int, str, float, bool, tuple, list, dict]}
 
         if obj_name not in self._objs.keys():
@@ -69,7 +79,6 @@ class BOT(discord.Client):
 
         if edit:
             await msg.edit(content=msg.content, view=obj)
-
 
     def delete_view(self, id):
         obj = self.sysorm.get_by_id('Views', id)
@@ -95,6 +104,9 @@ class BOT(discord.Client):
             self.add_view(obj(**b.options), message_id=int(b))
 
         print(self.user.name, "connected !")
+        
+        for i in self._fun_or:
+            await i()
 
     def cmd(self, name=None, description=None, **kwargs):
         def decorator(func):
@@ -106,6 +118,7 @@ class BOT(discord.Client):
                 f_desc = func.__doc__
 
             self.tree.command(name=f_name, description=f_desc, **kwargs)(func)
+
         return decorator
 
     def comp(self, obj):
@@ -173,6 +186,7 @@ class Project:
                 f.write(
                     self.error + "\n_____________________________________________________________________________\n")
                 print(self.name, f"ERROR, details in ./errors/{self.name}")
+
 
 class Serveur:
     def __init__(self):

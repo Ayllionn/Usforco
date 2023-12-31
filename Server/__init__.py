@@ -139,12 +139,15 @@ class Project:
 
             print(self.dir)
             for root, dirs, files in os.walk(self.dir):
+                s = root
                 for file in files:
+                    root = s
                     if file.endswith(".py"):
                         file = file[:-3]
                         if root.startswith("."):
                             root = root[2:]
-                        root.replace(os.getcwd(), "");root = root.replace("\\", "/").replace("/", ".")+"."+file
+                        root.replace(os.getcwd(), "");
+                        root = root.replace("\\", "/").replace("/", ".") + "." + file
                         print(root)
                         module = import_module(root)
                         getattr(module, "addon")(self.bot)

@@ -59,6 +59,10 @@ class DB:
         self.c.execute(f"DELETE FROM {table_name} WHERE id = ?", (record_id,))
         self.db.commit()
 
+    def order_by(self, table_name, collumn, limite=100):
+        self.c.execute(f'SELECT * FROM {table_name} ORDER BY {collumn} DESC LIMIT {limite}')
+        return self.c.fetchall()
+
     def update_data(self, table_name, record_id, **data):
         serialized_data = {k: json.dumps(v) if isinstance(v, (list, dict)) else v for k, v in data.items()}
         set_values = ', '.join(f"{key} = ?" for key in serialized_data.keys())
@@ -164,6 +168,9 @@ class Table:
     def create(self, **kwargs) -> object:
         return self.orm.create_data(self.table, **kwargs)
 
+    def get_order_by(self, collumn, limite=100) -> list[Object]:
+        return self.orm.get_order_by(self.table, collumn, limite)
+
 class ORM:
     def __init__(self, path, name):
         self.db = DB(path, name)
@@ -216,3 +223,9 @@ class ORM:
 
     def get_by_collum(self, table, collumn, value) -> list[Object]:
         return [self._mapper(table, data) for data in self.db.get_all_by_column(table=table, column=collumn, value=value)]
+
+    def get_order_by(self, table, collumn, limite=100) -> list[Object]:
+        t = []
+        for i in self.db.order_by(table, collumn, limite):
+            t.append(self._mapper(table, i))
+        return t

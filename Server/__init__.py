@@ -38,10 +38,17 @@ class BOT(discord.Client):
         self.tree = CommandTree(self)
         self._objs = {}
         self._fun_or = []
+        self._fun_om = []
 
     def on_ready_addon(self):
         def decorator(func):
             self._fun_or.append(func)
+
+        return decorator
+
+    def on_message_addon(self):
+        def decorator(func):
+            self._fun_om.append(func)
 
         return decorator
 
@@ -58,7 +65,7 @@ class BOT(discord.Client):
     def set_static(self, name, content):
         chemin = f"{self.static_dir}/{name}"
         if not os.path.exists(chemin):
-            os.makedirs(chemin)
+            os.makedirs("/".join(chemin.replace("\\", "/").split("/")[:-1]))
         with open(chemin, "w+", encoding="utf8") as f:
             if name.endswith(".json"):
                 json.dump(content, f)
@@ -104,9 +111,15 @@ class BOT(discord.Client):
             self.add_view(obj(**b.options), message_id=int(b))
 
         print(self.user.name, "connected !")
-        
+
         for i in self._fun_or:
             await i()
+
+        print(self.user.name, "is op !")
+
+    async def on_message(self, msg):
+        for i in self._fun_om:
+            await i(msg)
 
     def cmd(self, name=None, description=None, **kwargs):
         def decorator(func):

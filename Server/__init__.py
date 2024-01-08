@@ -3,9 +3,11 @@ import os
 import threading
 import time
 import traceback
+import discord.ext.commands
+import asyncio
+
 from glob import glob
 from json import load
-import discord.ext.commands
 from discord import Intents
 from discord.app_commands.tree import CommandTree
 from importlib import import_module
@@ -91,7 +93,16 @@ class BOT(discord.Client):
         obj = self.sysorm.get_by_id('Views', id)
         obj.delete()
 
+    async def _back_task(self):
+        while not self.is_closed():
+            await asyncio.sleep(5)
+            if self.get_static("sys/stat.txt") in ["rdm", "off"]:
+                await self.close()
+
     async def on_ready(self):
+
+        self.set_static('sys/stat.txt', "on")
+        self.loop.create_task(self._back_task())
 
         self.sysorm = ORM(path=self.db_path, name=f"sys_{self.db_name}")
         self.orm = ORM(path=self.db_path, name=self.db_name)
@@ -116,6 +127,12 @@ class BOT(discord.Client):
             await i()
 
         print(self.user.name, "is op !")
+
+    def reload(self):
+        self.close()
+
+    def off(self):
+        self.set_static("sys/stat.txt", "off")
 
     async def on_message(self, msg):
         for i in self._fun_om:
@@ -144,17 +161,26 @@ class Project:
     def __init__(self, name, conf):
         self.error = False
         self._container = []
+        self.name = name
+        self.dir = conf.pop("dir")
+        self.commun = conf.pop("commun")
+        self.conf = conf
 
+    def load(self):
         try:
+            name = self.name
+            conf = self.conf
+
+            self.error = False
+
             self.name = name
-            self.dir = conf.pop("dir")
-            commun = conf.pop("commun")
+
             if self.dir is None:
                 raise ValueError("Directory not found in your config file")
 
             self.bot = BOT(dir=self.dir, **conf)
 
-            for i in commun:
+            for i in self.commun:
                 try:
                     module = import_module(i)
                     getattr(module, "addon")(self.bot)
@@ -184,16 +210,21 @@ class Project:
             print(name, e)
             self.error = traceback.format_exc()
 
-    def load(self):
+# ____________________________________________________________________________________________________________________ #
+
         if self.error is False:
-            while True:
-                try:
-                    self.bot.run(token=self.bot.token)
-                except KeyboardInterrupt:
-                    break
-                else:
-                    time.sleep(10)
-                    continue
+            try:
+                self.bot.run(token=self.bot.token)
+            except:
+                pass
+
+            if self.bot.get_static("sys/stat.txt") == "off":
+                return
+
+            print(f"{self.bot.user.name} disconnected. Restart in 30 seconds")
+            time.sleep(30)
+            self.load()
+
         else:
             with open(f"./errors/{self.name}", "a+", encoding="utf8") as f:
                 f.write(

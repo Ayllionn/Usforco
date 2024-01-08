@@ -42,11 +42,11 @@ class BOT(discord.Client):
         self._fun_or = []
         self._fun_om = []
         self._fun_omd = []
-        
+
     def on_message_delete_addon(self):
         def decorator(func):
             self._fun_omd.append(func)
-        
+
         return decorator
 
     def on_ready_addon(self):
@@ -99,10 +99,10 @@ class BOT(discord.Client):
     def delete_view(self, id):
         obj = self.sysorm.get_by_id('Views', id)
         obj.delete()
-        
+
     async def on_message_delete(self, message: discord.Message):
         try:
-            msg = self.sysorm.get_by_id(message.id)
+            msg = self.sysorm.get_by_id("Views", message.id)
             msg.delete()
         except:
             pass

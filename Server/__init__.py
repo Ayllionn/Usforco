@@ -106,6 +106,8 @@ class BOT(discord.Client):
             msg.delete()
         except:
             pass
+        finally:
+            [await i(message) for i in self._fun_omd]
 
     async def _back_task(self):
         while not self.is_closed():

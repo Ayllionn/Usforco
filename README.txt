@@ -1,5 +1,5 @@
-Bonjour ! 
-<strong>tout se beau monde est la pour aidé a developpé des bots discord en python. </strong>
+# Bonjour ! 
+tout se beau monde est la pour aidé a developpé des bots discord en python.
 
 
 Pour ce programme, il est conçu pour interagir uniquement avec les serveurs Discord de base.

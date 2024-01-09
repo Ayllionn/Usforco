@@ -61,7 +61,7 @@ class BOT(discord.Client):
 
         return decorator
 
-    def get_static(self, name):
+    def get_static(self, name:str) -> str or dict:
         try:
             with open(f"{self.static_dir}/{name}", "r+") as f:
                 if name.endswith(".json"):
@@ -71,7 +71,12 @@ class BOT(discord.Client):
         except:
             return None
 
-    def set_static(self, name, content):
+    def all_s_in_dir(self, dir_name:str):
+        glober = glob(f'{os.getcwd()}/{self.dir}/{dir_name}/*')
+        glober = [i.replace(f"{os.getcwd()}/{self.dir}/", "") for i in glober]
+        return [self.get_static(i) for i in glober]
+
+    def set_static(self, name:str, content:str or dict):
         chemin = f"{self.static_dir}/{name}"
         if not os.path.exists(chemin):
             os.makedirs("/".join(chemin.replace("\\", "/").split("/")[:-1]))

@@ -36,12 +36,19 @@ class BOT(discord.Client):
         self.db_path = db_path
         self.db_name = db_name
 
+        self._schemas = []
+
         self.token = token
         self.tree = CommandTree(self)
         self._objs = {}
         self._fun_or = []
         self._fun_om = []
         self._fun_omd = []
+
+    def schema(self, cls):
+        self._schemas.append(cls)
+
+        return None
 
     def on_message_delete_addon(self):
         def decorator(func):
@@ -79,7 +86,12 @@ class BOT(discord.Client):
     def set_static(self, name:str, content:str or dict):
         chemin = f"{self.static_dir}/{name}"
         if not os.path.exists(chemin):
-            os.makedirs("/".join(chemin.replace("\\", "/").split("/")[:-1]))
+            for i in range(len(chemin.replace("\\", "/").split("/"))):
+                try:
+                    os.makedirs("/".join(chemin.replace("\\", "/").split("/")[:-(i+1)]))
+                    break
+                except:
+                    continue
         with open(chemin, "w+", encoding="utf8") as f:
             if name.endswith(".json"):
                 json.dump(content, f)
@@ -127,6 +139,9 @@ class BOT(discord.Client):
 
         self.sysorm = ORM(path=self.db_path, name=f"sys_{self.db_name}")
         self.orm = ORM(path=self.db_path, name=self.db_name)
+
+        for i in self._schemas:
+            self.orm.schema(i)
 
         @self.sysorm.schema
         class Views:

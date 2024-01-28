@@ -45,14 +45,14 @@ class BOT(discord.Client):
         self._fun_om = []
         self._fun_omd = []
         self._static_obj = {}
-        
+
     def static_obj(self, obj):
-        self.static_obj.update(
+        self._static_obj.update(
             {
                 obj.__name__: obj
             }
         )
-        
+
         return obj
 
     def schema(self, obj):
@@ -77,9 +77,9 @@ class BOT(discord.Client):
             self._fun_om.append(func)
 
         return decorator
-    
+
     def get_static_obj(self, obj_name):
-        return self.static_obj.get(obj_name)
+        return self._static_obj.get(obj_name)
 
     def get_static(self, name:str) -> str or dict:
         try:

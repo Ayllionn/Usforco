@@ -44,9 +44,19 @@ class BOT(discord.Client):
         self._fun_or = []
         self._fun_om = []
         self._fun_omd = []
+        self.static_obj = {}
+        
+    def static_obj(self, obj):
+        self.static_obj.update(
+            {
+                obj.__name__: obj
+            }
+        )
+        
+        return obj
 
-    def schema(self, cls):
-        self._schemas.append(cls)
+    def schema(self, obj):
+        self._schemas.append(obj)
 
         return None
 
@@ -67,6 +77,9 @@ class BOT(discord.Client):
             self._fun_om.append(func)
 
         return decorator
+    
+    def get_static_obj(self, obj_name):
+        return self.static_obj.get(obj_name)
 
     def get_static(self, name:str) -> str or dict:
         try:
@@ -204,6 +217,7 @@ class Project:
 
     def load(self):
         try:
+            self._container.clear()
             name = self.name
             conf = self.conf
 

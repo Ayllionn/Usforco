@@ -44,7 +44,7 @@ class BOT(discord.Client):
         self._fun_or = []
         self._fun_om = []
         self._fun_omd = []
-        self.static_obj = {}
+        self._static_obj = {}
         
     def static_obj(self, obj):
         self.static_obj.update(

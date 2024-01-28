@@ -257,7 +257,10 @@ class Project:
             if self.bot.get_static("sys/stat.txt") == "off":
                 return
 
-            print(f"{self.bot.user.name} disconnected. Restart in 30 seconds")
+            try:
+                print(f"{self.bot.user.name} disconnected. Restart in 30 seconds")
+            except:
+                raise Exception("Le project ne posséde pas un token valide")
             time.sleep(30)
             self.load()
 

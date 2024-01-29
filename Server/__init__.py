@@ -46,12 +46,19 @@ class BOT(discord.Client):
         self._fun_omd = []
         self._static_obj = {}
 
-    def static_obj(self, obj):
-        self._static_obj.update(
-            {
-                obj.__name__: obj
-            }
-        )
+    def static_obj(self, obj, name:str=None):
+        if name is None:
+            self._static_obj.update(
+                {
+                    obj.__name__: obj
+                }
+            )
+        else:
+            self._static_obj.update(
+                {
+                    name:obj
+                }
+            )
 
         return obj
 
@@ -92,24 +99,27 @@ class BOT(discord.Client):
             return None
 
     def all_s_in_dir(self, dir_name:str):
-        glober = glob(f'{os.getcwd()}/{self.dir}/{dir_name}/*')
-        glober = [i.replace(f"{os.getcwd()}/{self.dir}/", "") for i in glober]
-        return [self.get_static(i) for i in glober]
+        glober = glob(f'{self.static_dir}/{dir_name}/*')
+        glober = [i.replace(f'{self.static_dir}/', '') for i in glober]
+        return {k.split(".")[0].replace("\\", "/").split("/")[-1]:self.get_static(k) for k in glober}
 
-    def set_static(self, name:str, content:str or dict):
-        chemin = f"{self.static_dir}/{name}"
-        if not os.path.exists(chemin):
-            for i in range(len(chemin.replace("\\", "/").split("/"))):
-                try:
-                    os.makedirs("/".join(chemin.replace("\\", "/").split("/")[:-(i+1)]))
-                    break
-                except:
-                    continue
-        with open(chemin, "w+", encoding="utf8") as f:
-            if name.endswith(".json"):
-                json.dump(content, f)
-            else:
-                f.write(content)
+    def set_static(self, name:str, content:str or dict=None):
+        if content is not None:
+            chemin = f"{self.static_dir}/{name}"
+            if not os.path.exists(chemin):
+                for i in range(len(chemin.replace("\\", "/").split("/"))):
+                    try:
+                        os.makedirs("/".join(chemin.replace("\\", "/").split("/")[:-(i+1)]))
+                        break
+                    except:
+                        continue
+            with open(chemin, "w+", encoding="utf8") as f:
+                if name.endswith(".json"):
+                    json.dump(content, f)
+                else:
+                    f.write(content)
+        else:
+            os.remove(f"{self.static_dir}/{name}")
 
     async def save_view(self, obj: object, msg, edit=False):
         obj_name = obj.__class__.__name__

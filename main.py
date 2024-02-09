@@ -1,7 +1,13 @@
 import os
 import platform
+from venv import create
+
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 if not os.path.exists('cache'):
+    print(f"Python version : {platform.python_version()}\n"
+          f"Python recommanded version : 3.11")
+    input("Press Enter to continue or CTRL+C to exit...")
     os.mkdir('cache')
 
 try:
@@ -13,22 +19,34 @@ except:
     with open('cache/env', "w+") as f:
         env = input("Please enter your environment path\n> :")
         if os.path.exists(env):
-            print(env)
-            f.write(env)
+            pass
         else:
-            exit("Environment folder not found")
+            create(os.path.join(os.getcwd(), env), with_pip=True, upgrade_deps=True)
+
+        print(env)
+        f.write(env)
+
+python = None
 
 def check():
+    global python
 
     for root, dirs, files in os.walk(env):
         for file in files:
-            if file.split(".")[0] == "pip":
+            if file.split(".")[0].lower() == "pip":
                 pip = os.path.join(root, file)
+            if file.split(".")[0].lower() == "python":
+                python = os.path.join(root, file)
 
     try:
         print(pip)
     except:
         exit("pip not found")
+
+    try:
+        print(python)
+    except:
+        exit("python not found")
 
     with open("./requirements.txt", "r+") as file:
         requirements = file.read().split("\n")
@@ -54,7 +72,10 @@ elif platform.system() == "Linux":
 else:
     exit("Unsupported")
 
-from Server import Serveur
+try:
+    from Server import Serveur
+except:
+    os.system(f"{python} main.py")
 
 if __name__ == '__main__':
     srv = Serveur()

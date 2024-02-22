@@ -48,7 +48,7 @@ def check():
     except:
         exit("python not found")
 
-    with open("./requirements.txt", "r+") as file:
+    with open("./requirements.txt", "r+", encoding="utf8") as file:
         requirements = file.read().split("\n")
 
     cmd = os.popen(f"{pip} freeze")
@@ -73,10 +73,13 @@ else:
     exit("Unsupported")
 
 try:
-    from Server import Serveur
+    from Server import Server
 except:
     os.system(f"{python} main.py")
 
 if __name__ == '__main__':
-    srv = Serveur()
-    srv.load()
+    try:
+        srv = Server()
+        srv.load()
+    except:
+        pass

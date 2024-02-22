@@ -3,6 +3,8 @@ import os
 import threading
 import time
 import traceback
+from typing import Any
+
 import discord.ext.commands
 import asyncio
 
@@ -12,10 +14,10 @@ from discord import Intents
 from discord.app_commands.tree import CommandTree
 from importlib import import_module
 from data import ORM
-
+from .term import CustomTerminal
 
 class BOT(discord.Client):
-    def __init__(self, dir, token, db_path, db_name, static, intent=None):
+    def __init__(self, dir, token, dbpath, dbname, static, intent=None, **kwargs):
         self.dir = dir
         self.static_dir = static
         if intent is not None:
@@ -30,11 +32,12 @@ class BOT(discord.Client):
         class créeant le bot et déployant les tools utilisables
         """
         super().__init__(intents=intents)
+        self.project_name = kwargs.get('project_name')
         self.sysorm: ORM = None
         self.orm: ORM = None
 
-        self.db_path = db_path
-        self.db_name = db_name
+        self.db_path = dbpath
+        self.db_name = dbname
 
         self._schemas = []
 
@@ -45,6 +48,12 @@ class BOT(discord.Client):
         self._fun_om = []
         self._fun_omd = []
         self._static_obj = {}
+
+    async def on_error(self, event_method: str, /, *args: Any, **kwargs: Any) -> None:
+        with open(f"./errors/{self.project_name}", "a") as log:
+            log.write(f"DICORC API ERROR: \n{event_method} : args : {args} kwargs : {kwargs} : \n{traceback.format_exc()}")
+            log.write("\n_______________________________________________________________________________________________")
+        print(self.project_name, f"ERROR in {event_method}")
 
     def static_obj(self, obj, name:str=None):
         if name is None:
@@ -187,12 +196,6 @@ class BOT(discord.Client):
 
         print(self.user.name, "is op !")
 
-    def reload(self):
-        self.close()
-
-    def off(self):
-        self.set_static("sys/stat.txt", "off")
-
     async def on_message(self, msg):
         for i in self._fun_om:
             await i(msg)
@@ -215,17 +218,26 @@ class BOT(discord.Client):
 
         return obj
 
+    def reload(self):
+        self.close()
+
+    def off(self):
+        self.set_static("sys/stat.txt", "off")
+
 
 class Project:
     def __init__(self, name, conf):
+        self.bot = None
         self.error = False
         self._container = []
         self.name = name
-        self.dir = conf.pop("dir")
-        self.commun = conf.pop("commun")
-        self.conf = conf
+        self.commun = conf.get("commun")
+        self.dir = conf.get("dir")
+        conf.update({"project_name": name})
+        self.conf = conf.copy()
 
     def load(self):
+        print(self.name, 'lunched')
         try:
             self._container.clear()
             name = self.name
@@ -238,7 +250,7 @@ class Project:
             if self.dir is None:
                 raise ValueError("Directory not found in your config file")
 
-            self.bot = BOT(dir=self.dir, **conf)
+            self.bot = BOT(**conf)
 
             for i in self.commun:
                 try:
@@ -284,7 +296,8 @@ class Project:
             try:
                 print(f"{self.bot.user.name} disconnected. Restart in 30 seconds")
             except:
-                raise Exception("Le project ne posséde pas un token valide")
+                print(f"Le project {self.name} ne posséde pas un token valide")
+                return
             time.sleep(30)
             self.load()
 
@@ -295,28 +308,97 @@ class Project:
                 print(self.name, f"ERROR, details in ./errors/{self.name}")
 
 
-class Serveur:
+class Server:
     def __init__(self):
-        self.projects = []
-
-        for path in glob(f"{os.getcwd()}/Project/*.json"):
-
-            with open(path, "r+", encoding="utf8") as f:
-                conf = load(f)
-
+        self.on = False
+        self.threads = []
+        if not os.path.exists("errors"):
+            os.makedirs("errors")
+        try:
+            with open("./Project/config.json", "r", encoding="utf8") as f:
+                self.config = json.load(f)
+        except FileNotFoundError:
             try:
-                self.projects.append(Project(path.replace("\\", '/').split("/")[-1][:-5], conf))
+                os.mkdir("./Project/")
             except:
-                traceback.print_exc()
+                pass
+
+            name = input("1st project's name : ").replace(" ", "_")
+
+            self.config = {
+                name : {
+                    "token": input("Token : ").replace(" ", ""),
+                    "intents": input("Intents function [all, default]: ").replace(" ", ""),
+                    "dbname": input("Database name : ").replace(" ", "_"),
+                    "dbpath": input("Database path : "),
+                    "dir": input("Project's commands folder : "),
+                    "static" : input("Static folder : "),
+                    "commun" : []
+                }
+            }
+            config = self.config[name]
+
+            if not os.path.exists(config["dir"]):
+                os.makedirs(config["dir"])
+            if not os.path.exists(config["dbpath"]):
+                os.makedirs(config["dbpath"])
+
+            with open("./Project/config.json", "w", encoding="utf8") as f:
+                json.dump(self.config, f)
+
+        self.projects = [
+            Project(k, v) for k, v in self.config.items()
+        ]
+
+    def _bg_task(self):
+        while self.on:
+            time.sleep(2)
+            for thread in self.threads:
+                if not thread.is_alive():
+                    self.threads.remove(thread)
+        print("Server off")
+
+    def stop_project(self, project_name):
+        for project in self.projects:
+            if project.name == project_name:
+                project.bot.off()
+
+    def start_project(self, project_name):
+        for project in self.projects:
+            if project.name == project_name:
+                try:
+                    thread = threading.Thread(target=project.load)
+                    self.threads.append(thread)
+                    thread.start()
+                except:
+                    with open(f"./errors/{project.name}", "a+") as f:
+                        f.write(f"ERROR at start :\n {traceback.format_exc()}")
+                        f.write(
+                            "\n_______________________________________________________________________________________")
 
     def load(self):
-        process = []
-        for p in self.projects:
-            process.append(threading.Thread(target=p.load))
-            process[-1].start()
+        self.on = True
+        threading.Thread(target=self._bg_task).start()
+        self.threads = []
+        for project in self.projects:
+            try:
+                if project.conf.get("start") is None:
+                    thread = threading.Thread(target=project.load)
+                    self.threads.append(thread)
+                    thread.start()
+            except:
+                with open(f"./errors/{project.name}", "a+") as f:
+                    f.write(f"ERROR at start :\n {traceback.format_exc()}")
+                    f.write("\n_______________________________________________________________________________________")
 
+        terminal = CustomTerminal(panel=False, help_at_start=False, search="n", terminal_name="manage server", variable={"serv":self})
         try:
-            for proc in process:
-                proc.join()
-        except KeyboardInterrupt:
-            exit()
+            terminal.get_raw_cmds_files(f"{os.getcwd()}/Server/term_cmds/")
+        except:
+            traceback.print_exception()
+        time.sleep(len(self.threads)*5)
+        terminal.start()
+
+        self.on = False
+        for project in self.projects:
+            project.bot.off()

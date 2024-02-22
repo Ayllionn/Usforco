@@ -1,5 +1,6 @@
 import os
 import shutil
+import sys
 import zipfile
 
 def update(auto=None):
@@ -55,3 +56,5 @@ def update(auto=None):
                     shutil.copy(source_file, destination_file)
         shutil.rmtree(origin)
         shutil.rmtree(env)
+        python = sys.executable
+        os.execl(python, python, *sys.argv)

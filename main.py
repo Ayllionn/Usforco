@@ -1,5 +1,7 @@
 import os
 import platform
+import time
+import traceback
 from venv import create
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -83,7 +85,11 @@ try:
         with open("cache/update.txt", "w") as update:
             update.write(input("Do you want to auto-update at start ? [y/n] :"))
     up("y")
+except ModuleNotFoundError:
+    os.system(f"{python} main.py")
 except:
+    traceback.print_exception()
+    input("Enter to reload")
     os.system(f"{python} main.py")
 
 if __name__ == '__main__':

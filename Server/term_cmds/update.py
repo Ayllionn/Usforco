@@ -30,8 +30,11 @@ def start(variables):
             print("Installed successfully")
             exit("updated successfully, serveur is clossing")
 
-        shutil.rmtree(os.getcwd() + "/Server")
-        shutil.rmtree(os.getcwd() + "/Data")
-        for files in os.listdir("./Usforco-main"):
-            shutil.copytree("./Usforco-main"+files, os.getcwd())
-        shutil.rmtree("./Usforco-main")
+        for root, dirs, files in os.walk("./Usforco-main"):
+            for file in files:
+                if not os.path.exists(
+                        "./" + "/".join(("./" + root.replace(os.getcwd(), "")).replace("\\", "/").split("/")[2:])):
+                    os.makedirs(
+                        "./" + "/".join(("./" + root.replace(os.getcwd(), "")).replace("\\", "/").split("/")[2:]))
+                shutil.copy(root + "/" + file, os.getcwd() + "/" + "/".join(
+                    ("./" + root.replace(os.getcwd(), "")).replace("\\", "/").split("/")[2:]))

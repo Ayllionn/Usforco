@@ -40,19 +40,14 @@ def update(auto=None):
 
         for root, dirs, files in os.walk(origin):
             for file in files:
-                # Chemin complet du fichier d'origine
                 source_file = os.path.join(root, file)
-                # Chemin complet du fichier de destination
                 destination_file = os.path.join(os.getcwd(), root[len(origin) + 1:], file)
 
-                # Vérifier si le fichier de source et de destination sont les mêmes
                 if os.path.abspath(source_file) != os.path.abspath(destination_file):
-                    # Vérifier si le dossier de destination existe, sinon le créer
                     destination_folder = os.path.dirname(destination_file)
                     if not os.path.exists(destination_folder):
                         os.makedirs(destination_folder)
 
-                    # Copier le fichier
                     shutil.copy(source_file, destination_file)
         shutil.rmtree(origin)
         python = sys.executable

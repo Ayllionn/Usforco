@@ -82,7 +82,7 @@ try:
     if not os.path.exists('cache/update.txt'):
         with open("cache/update.txt", "w") as update:
             update.write(input("Do you want to auto-update at start ? [y/n] :"))
-            up("y")
+    up("y")
 except:
     os.system(f"{python} main.py")
 

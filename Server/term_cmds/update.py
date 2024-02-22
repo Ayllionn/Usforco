@@ -23,6 +23,7 @@ def start(variables):
             os.system("curl -o temp.zip https://github.com/Ayllionn/Usforco/archive/refs/heads/main.zip")
             with zipfile.ZipFile(os.getcwd()+"/temp.zip", 'r') as zip_ref:
                 zip_ref.extractall(os.getcwd())
+            os.remove("temp.zip")
             print("Installed successfully")
             exit("updated successfully, serveur is clossing")
 

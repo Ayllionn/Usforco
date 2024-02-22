@@ -25,3 +25,5 @@ def start(variables):
                 zip_ref.extractall(os.getcwd())
             print("Installed successfully")
             exit("updated successfully, serveur is clossing")
+
+start(None)

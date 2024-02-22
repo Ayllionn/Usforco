@@ -13,8 +13,8 @@ def update(auto=None):
     last_version = [int(i.replace("\n", "").replace(" ", "")) for i in last_version]
     version = [int(i.replace("\n", "").replace(" ", "")) for i in version]
 
-    print("Current version :", ".".join(version))
-    print("Last version :", ".".join(last_version))
+    print("Current version :", version)
+    print("Last version :", last_version)
 
     update = False
 

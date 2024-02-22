@@ -55,6 +55,5 @@ def update(auto=None):
                     # Copier le fichier
                     shutil.copy(source_file, destination_file)
         shutil.rmtree(origin)
-        shutil.rmtree(env)
         python = sys.executable
         os.execl(python, python, *sys.argv)

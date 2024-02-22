@@ -1,5 +1,6 @@
 import os
 import zipfile
+import shutil
 
 def start(variables):
     with open("./Server/version", "r", encoding="utf8") as version_file:

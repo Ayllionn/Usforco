@@ -22,11 +22,15 @@ def start(variables):
     if update:
         resp = input("An update is available. Do you want to install it? (y/n) ")
         if resp == "y":
-            os.system("curl -o temp.zip https://github.com/Ayllionn/Usforco/archive/refs/heads/main.zip")
+            os.system("curl -LJ -o temp.zip https://github.com/Ayllionn/Usforco/archive/refs/heads/main.zip")
             with zipfile.ZipFile(os.getcwd()+"/temp.zip", 'r') as zip_ref:
                 zip_ref.extractall(os.getcwd())
             os.remove("temp.zip")
             print("Installed successfully")
             exit("updated successfully, serveur is clossing")
 
-start(None)
+        shutil.rmtree(os.getcwd() + "/Server")
+        shutil.rmtree(os.getcwd() + "/Data")
+        for files in os.listdir("./Usforco-main"):
+            shutil.copytree("./Usforco-main"+files, os.getcwd())
+        shutil.rmtree("./Usforco-main")

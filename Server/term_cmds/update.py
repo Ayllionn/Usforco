@@ -7,6 +7,8 @@ def start(variables):
         version = version.split(".")
 
     last_version = os.popen("curl https://usforco.netlify.app/documentation/version.txt").read().split(".")
+    last_version = [int(i.replace("\n", "").replace(" ", "")) for i in last_version]
+    version = [int(i.replace("\n", "").replace(" ", "")) for i in version]
 
     print("Current version :", version)
     print("Last version :", last_version)
@@ -14,7 +16,7 @@ def start(variables):
     update = False
 
     for v, v2 in zip(version, last_version):
-        if v > v2:
+        if v < v2:
             update = True
 
     if update:

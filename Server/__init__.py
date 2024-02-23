@@ -299,7 +299,7 @@ class Project:
                 print(f"Le project {self.name} ne posséde pas un token valide")
                 return
             time.sleep(30)
-            self.load()
+            return self.load()
 
         else:
             with open(f"./errors/{self.name}", "a+", encoding="utf8") as f:
@@ -396,7 +396,6 @@ class Server:
             terminal.get_raw_cmds_files(f"{os.getcwd()}/Server/term_cmds/")
         except:
             traceback.print_exception()
-        time.sleep(len(self.threads)*5)
         terminal.start()
 
         self.on = False

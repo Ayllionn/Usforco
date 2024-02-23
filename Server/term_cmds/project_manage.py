@@ -50,7 +50,7 @@ def s_stop(variables):
     server.stop_project(project)
     print("Project will stop")
 
-def relolad(variables):
+def reload(variables):
     """reload the project"""
     s_stop(variables)
     time.sleep(5)
@@ -83,5 +83,5 @@ def start(variables, project:str=None):
                           start_ws=start_ws,
                           start=s_start,
                           stop=s_stop,
-                          relolad=relolad)
+                          reload=reload)
     term.start()

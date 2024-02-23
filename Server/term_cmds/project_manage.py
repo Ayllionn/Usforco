@@ -51,7 +51,7 @@ def s_stop(variables):
     print("Project will stop")
 
 def relolad(variables):
-    """reload the project""""
+    """reload the project"""
     s_stop(variables)
     time.sleep(5)
     s_start(variables)

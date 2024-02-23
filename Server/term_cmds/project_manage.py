@@ -1,6 +1,7 @@
 import json
 from ..term import CustomTerminal
 from Server import Server
+import time
 
 def deleted(variables):
     "delete the project"
@@ -49,6 +50,12 @@ def s_stop(variables):
     server.stop_project(project)
     print("Project will stop")
 
+def relolad(variables):
+    """reload the project""""
+    s_stop(variables)
+    time.sleep(5)
+    s_start(variables)
+
 def start(variables, project:str=None):
     """Permet de geré les projects"""
     with open("Project/config.json") as json_file:
@@ -74,6 +81,7 @@ def start(variables, project:str=None):
     term = CustomTerminal(search="n", terminal_name=f"manage {project}", panel=False, variable={"project":project, "serv":variables["serv"]},
                           deleted=deleted,
                           start_ws=start_ws,
-                          s_start=s_start,
-                          s_stop=s_stop)
+                          start=s_start,
+                          stop=s_stop,
+                          relolad=relolad)
     term.start()

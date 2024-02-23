@@ -9,9 +9,6 @@ from traceback import print_exc
 from glob import glob
 import importlib
 
-with open("./Server/version", "r+") as version:
-    print(version.read())
-
 console = Console()
 
 class CommandNotFound(Exception):

@@ -36,19 +36,19 @@ def update(auto=None):
                 zip_ref.extractall(os.getcwd())
             os.remove("temp.zip")
 
-        origin = "./Usforco-main"
-
-        for root, dirs, files in os.walk(origin):
-            for file in files:
-                source_file = os.path.join(root, file)
-                destination_file = os.path.join(os.getcwd(), root[len(origin) + 1:], file)
-
-                if os.path.abspath(source_file) != os.path.abspath(destination_file):
-                    destination_folder = os.path.dirname(destination_file)
-                    if not os.path.exists(destination_folder):
-                        os.makedirs(destination_folder)
-
-                    shutil.copy(source_file, destination_file)
-        shutil.rmtree(origin)
-        python = sys.executable
-        os.execl(python, python, *sys.argv)
+            origin = "./Usforco-main"
+    
+            for root, dirs, files in os.walk(origin):
+                for file in files:
+                    source_file = os.path.join(root, file)
+                    destination_file = os.path.join(os.getcwd(), root[len(origin) + 1:], file)
+    
+                    if os.path.abspath(source_file) != os.path.abspath(destination_file):
+                        destination_folder = os.path.dirname(destination_file)
+                        if not os.path.exists(destination_folder):
+                            os.makedirs(destination_folder)
+    
+                        shutil.copy(source_file, destination_file)
+            shutil.rmtree(origin)
+            python = sys.executable
+            os.execl(python, python, *sys.argv)

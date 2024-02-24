@@ -1,4 +1,8 @@
 import json
+import os
+import subprocess
+import sys
+
 from ..term import CustomTerminal
 from Server import Server
 import time
@@ -38,10 +42,8 @@ def start_ws(variables, y_n):
 
 def s_start(variables):
     """start the project"""
-    project = variables['project']
-    server: Server = variables['serv']
-    server.start_project(project)
-    print("Project will start")
+    command = [sys.executable, os.getcwd()+"/"+"main.py", variables["project"]]
+    subprocess.Popen(command, shell=True)
 
 def s_stop(variables):
     """stop the project"""

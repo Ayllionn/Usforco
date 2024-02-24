@@ -227,7 +227,7 @@ class BOT(discord.Client):
 
 class Project:
     def __init__(self, name, conf):
-        self.bot = None
+        self.bot = BOT(**conf)
         self.error = False
         self._container = []
         self.name = name
@@ -327,6 +327,7 @@ class Server:
 
             self.config = {
                 name : {
+                    "start": True,
                     "token": input("Token : ").replace(" ", ""),
                     "intents": input("Intents function [all, default]: ").replace(" ", ""),
                     "dbname": input("Database name : ").replace(" ", "_"),
@@ -363,13 +364,16 @@ class Server:
             if project.name == project_name:
                 project.bot.off()
 
-    def start_project(self, project_name):
+    def start_project(self, project_name, standalone=False):
         for project in self.projects:
             if project.name == project_name:
                 try:
-                    thread = threading.Thread(target=project.load)
-                    self.threads.append(thread)
-                    thread.start()
+                    if standalone:
+                        project.load()
+                    else:
+                        thread = threading.Thread(target=project.load)
+                        self.threads.append(thread)
+                        thread.start()
                 except:
                     with open(f"./errors/{project.name}", "a+") as f:
                         f.write(f"ERROR at start :\n {traceback.format_exc()}")
@@ -382,7 +386,7 @@ class Server:
         self.threads = []
         for project in self.projects:
             try:
-                if project.conf.get("start") is None:
+                if project.conf.get("start") is None or project.conf.get("start") == True:
                     thread = threading.Thread(target=project.load)
                     self.threads.append(thread)
                     thread.start()

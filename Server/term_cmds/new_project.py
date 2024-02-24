@@ -18,6 +18,7 @@ def start(variables, name:str=None):
 
     config.update({
         name: {
+            "start": False,
             "token": input("Token : ").replace(" ", ""),
             "intents": input("Intents function [all, default]: ").replace(" ", ""),
             "dbname": input("Database name : ").replace(" ", "_"),
@@ -25,7 +26,6 @@ def start(variables, name:str=None):
             "dir": input("Project's commands folder : "),
             "static": input("Static folder : "),
             "commun": [],
-            "start": False
         }
     })
 

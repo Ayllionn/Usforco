@@ -3,6 +3,7 @@ import platform
 import time
 import traceback
 from venv import create
+import sys
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -78,6 +79,7 @@ else:
     exit("Unsupported")
 
 try:
+    error = False
     from Server import Server
     from Server.update import update as up
 
@@ -86,15 +88,28 @@ try:
             update.write(input("Do you want to auto-update at start ? [y/n] :"))
     up("y")
 except ModuleNotFoundError:
-    os.system(f"{python} main.py")
+    error = True
+    os.system(f"{python} main.py {' '.join(sys.argv[1:])}")
 except:
+    error = True
     traceback.print_exception()
     input("Enter to reload")
-    os.system(f"{python} main.py")
+    os.system(f"{python} main.py {' '.join(sys.argv[1:])}")
+    exit()
 
 if __name__ == '__main__':
-    try:
-        srv = Server()
-        srv.load()
-    except:
-        pass
+    if not error:
+        if len(sys.argv) == 1:
+            try:
+                srv = Server()
+                srv.load()
+            except:
+                pass
+        elif len(sys.argv) == 2:
+            srv = Server()
+            try:
+                srv.start_project(sys.argv[1], True)
+            except:
+                with open(f"errors/{sys.argv[1]}.txt", "a+") as errors:
+                    errors.write(f"\t{traceback.format_exc()}\n"
+                                 f"________________________________________________________________________________________")

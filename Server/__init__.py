@@ -140,7 +140,7 @@ class BOT(discord.Client):
         if obj_name not in self._objs.keys():
             raise ValueError(f"{obj_name} not in persistant components")
 
-        self.sysorm.create_data('Views', id=int(msg.id), obj_name=obj_name, options=options)
+        self.sysorm.create_data('Views', id=int(msg.id), obj_name=obj_name, options=options, channel=msg.channel.id)
 
         if edit:
             await msg.edit(content=msg.content, view=obj)
@@ -148,6 +148,12 @@ class BOT(discord.Client):
     def delete_view(self, id):
         obj = self.sysorm.get_by_id('Views', id)
         obj.delete()
+        
+    async def _back_task(self):
+        while not self.is_closed():
+            await asyncio.sleep(5)
+            if self.get_static("sys/stat.txt") in ["rdm", "off"]:
+                await self.close()
 
     async def on_message_delete(self, message: discord.Message):
         try:
@@ -157,12 +163,6 @@ class BOT(discord.Client):
             pass
         finally:
             [await i(message) for i in self._fun_omd]
-
-    async def _back_task(self):
-        while not self.is_closed():
-            await asyncio.sleep(5)
-            if self.get_static("sys/stat.txt") in ["rdm", "off"]:
-                await self.close()
 
     async def on_ready(self):
 
@@ -178,11 +178,20 @@ class BOT(discord.Client):
         @self.sysorm.schema
         class Views:
             id = int
+            channel_id = int
             obj_name = str
             options = dict
 
         await self.tree.sync()
         for b in self.sysorm.get_all_by_table('Views'):
+            
+            try:
+                channel = self.get_channel(b.channel)
+                await channel.fetch_message(int(b))
+            except:
+                b.delete()
+                continue
+            
             obj = self._objs.get(b.obj_name)
             if obj is None:
                 raise ValueError(f'{b.obj_name} not in [{", ".join(self._objs.keys())}]')

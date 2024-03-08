@@ -49,10 +49,15 @@ class BOT(discord.Client):
         self._fun_omd = []
         self._static_obj = {}
 
+        self.tree.error(self.on_command_error)
+
+    async def on_command_error(self, ctx, erreur):
+        await self.on_error("SLASH_COMMAND", error=erreur)
+
     async def on_error(self, event_method: str, /, *args: Any, **kwargs: Any) -> None:
         with open(f"./errors/{self.project_name}", "a") as log:
             up = "\t\n"
-            log.write(f"DICORC API ERROR: {str(event_method)} :\n\n args : {up.join([str(i) for i in args])} kwargs :\n\n {up.join([f'{k} : {v}' for k, v in kwargs.items()])} : \n")
+            log.write(f"DICORD API ERROR: {str(event_method)} :\n\n args : {up.join([str(i) for i in args])} kwargs :\n\n {up.join([f'{k} : {v}' for k, v in kwargs.items()])} : \n")
             try:
                 log.write("\n\n"+str(traceback.format_exc()))
             except:

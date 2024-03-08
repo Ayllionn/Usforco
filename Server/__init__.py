@@ -62,7 +62,7 @@ class BOT(discord.Client):
                 log.write("\n\n"+str(traceback.format_exc()))
             except:
                 pass
-            log.write("\n_______________________________________________________________________________________________")
+            log.write("\n_______________________________________________________________________________________________\n")
         print(self.project_name, f"ERROR in {event_method}")
 
     def static_obj(self, obj, name:str=None):

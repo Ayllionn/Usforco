@@ -51,7 +51,12 @@ class BOT(discord.Client):
 
     async def on_error(self, event_method: str, /, *args: Any, **kwargs: Any) -> None:
         with open(f"./errors/{self.project_name}", "a") as log:
-            log.write(f"DICORC API ERROR: \n{event_method} : args : {args} kwargs : {kwargs} : \n{traceback.format_exc()}")
+            up = "\t\n"
+            log.write(f"DICORC API ERROR: {str(event_method)} :\n\n args : {up.join([str(i) for i in args])} kwargs :\n\n {up.join([f'{k} : {v}' for k, v in kwargs.items()])} : \n")
+            try:
+                log.write("\n\n"+str(traceback.format_exc()))
+            except:
+                pass
             log.write("\n_______________________________________________________________________________________________")
         print(self.project_name, f"ERROR in {event_method}")
 

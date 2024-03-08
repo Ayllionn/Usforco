@@ -57,7 +57,7 @@ class BOT(discord.Client):
     async def on_error(self, event_method: str, /, *args: Any, **kwargs: Any) -> None:
         with open(f"./errors/{self.project_name}", "a") as log:
             up = "\n"
-            log.write(f"DICORD API ERROR: {str(event_method)} :\n\n args :\n {up.join([str(i) for i in args])}\n______________________________________________________________________________________________________________________\n kwargs :\n {up.join([f'{k} : {v}' for k, v in kwargs.items()])} : \n")
+            log.write(f"DICORD API ERROR: {str(event_method)} :\n\n args :\n {up.join([str(i) for i in args])}\n_________________________________________________________\n kwargs :\n {up.join([f'{k} : {v}' for k, v in kwargs.items()])} : \n")
             try:
                 log.write("\n\n"+str(traceback.format_exc()))
             except:

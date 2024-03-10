@@ -17,14 +17,14 @@ from data import ORM
 from .term import CustomTerminal
 
 class BOT(discord.Client):
-    def __init__(self, dir, token, dbpath, dbname, static, intent=None, **kwargs):
+    def __init__(self, dir, token, dbpath, dbname, static, intents=None, **kwargs):
         self.dir = dir
         self.static_dir = static
-        if intent is not None:
-            if type(intent) is list:
-                intents = Intents(**{k: True for k in intent})
-            elif type(intent) is str:
-                intents = getattr(Intents, intent)()
+        if intents is not None:
+            if type(intents) is list:
+                intents = Intents(**{k: True for k in intents})
+            elif type(intents) is str:
+                intents = getattr(Intents, intents)()
         else:
             intents = Intents.default()
 
@@ -150,7 +150,7 @@ class BOT(discord.Client):
         if obj_name not in self._objs.keys():
             raise ValueError(f"{obj_name} not in persistant components")
 
-        self.sysorm.create_data('Views', id=int(msg.id), obj_name=obj_name, options=options, channel=msg.channel.id)
+        self.sysorm.create_data('Views', id=int(msg.id), obj_name=obj_name, options=options, channel_id=msg.channel.id)
 
         if edit:
             await msg.edit(content=msg.content, view=obj)
@@ -196,9 +196,9 @@ class BOT(discord.Client):
         for b in self.sysorm.get_all_by_table('Views'):
             
             try:
-                channel = self.get_channel(b.channel)
+                channel = self.get_channel(b.channel_id)
                 await channel.fetch_message(int(b))
-            except:
+            except discord.NotFound:
                 b.delete()
                 continue
             

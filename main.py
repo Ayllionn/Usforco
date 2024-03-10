@@ -8,9 +8,7 @@ import sys
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 if not os.path.exists('cache'):
-    print(f"Python version : {platform.python_version()}\n"
-          f"Python recommanded version : 3.11")
-    input("Press Enter to continue or CTRL+C to exit...")
+    print(f"Python version : {platform.python_version()}")
     os.mkdir('cache')
 
 try:
@@ -19,8 +17,9 @@ try:
         if not os.path.exists("cache/env"):
             raise ValueError()
         elif not os.path.exists(env):
+            print("please wait.")
             create(os.path.join(os.getcwd(), env), with_pip=True, upgrade_deps=True)
-            print(env)
+            print(env, "done !")
 except:
     with open('cache/env', "w+") as f:
         env = input("Please enter your environment path\n> :")

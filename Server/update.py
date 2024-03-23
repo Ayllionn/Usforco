@@ -27,6 +27,8 @@ def update(auto=None):
     for v, v2 in zip(version, last_version):
         if v < v2:
             update = True
+        if v2 > v:
+            break
 
     if update:
         if auto is None:

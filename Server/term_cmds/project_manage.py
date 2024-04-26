@@ -44,7 +44,7 @@ def start_ws(variables, y_n):
 def s_start(variables):
     """start the project"""
     command = [sys.executable, os.getcwd()+"/"+"main.py", variables["project"]]
-    subprocess.Popen(command, shell=True)
+    subprocess.Popen(" ".join(command), shell=True)
 
 def s_stop(variables):
     """stop the project"""

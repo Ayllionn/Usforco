@@ -88,14 +88,12 @@ try:
 except ModuleNotFoundError:
     error = True
     os.system(f"{python} main.py {' '.join(sys.argv[1:])}")
-    print(f"{python} main.py {' '.join(sys.argv[1:])}")
     exit()
 except:
     error = True
     traceback.print_exc()
     input("Enter to reload")
     os.system(f"{python} main.py {' '.join(sys.argv[1:])}")
-    print(f"{python} main.py {' '.join(sys.argv[1:])}")
     exit()
 
 if __name__ == '__main__':

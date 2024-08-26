@@ -1,6 +1,5 @@
 import os
 import platform
-import time
 import traceback
 from venv import create
 import sys
@@ -37,7 +36,11 @@ for root, dirs, files in os.walk(env):
         if file.split(".")[0].lower() == "pip":
             pip = os.path.join(root, file)
         if file.split(".")[0].lower() == "python":
-            python = os.path.join(root, file)
+            if platform.system() == "Windows":
+                python = os.path.join(root, file)
+            elif platform.system() == "Linux":
+                if file == "python":
+                    python = os.path.join(root, file)
 
 
 try:
@@ -85,11 +88,14 @@ try:
 except ModuleNotFoundError:
     error = True
     os.system(f"{python} main.py {' '.join(sys.argv[1:])}")
+    print(f"{python} main.py {' '.join(sys.argv[1:])}")
+    exit()
 except:
     error = True
     traceback.print_exc()
     input("Enter to reload")
     os.system(f"{python} main.py {' '.join(sys.argv[1:])}")
+    print(f"{python} main.py {' '.join(sys.argv[1:])}")
     exit()
 
 if __name__ == '__main__':
